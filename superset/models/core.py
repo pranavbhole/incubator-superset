@@ -8,13 +8,14 @@ from __future__ import unicode_literals
 
 from contextlib import closing
 from copy import copy, deepcopy
-from datetime import datetime
+from datetime import timedelta, datetime, date
+import calendar, time
 import functools
 import json
 import logging
 import textwrap
 
-from flask import escape, g, Markup, request
+from flask import escape, g, Markup, request, has_request_context
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.security.sqla.models import User
@@ -1113,3 +1114,70 @@ class DatasourceAccessRequest(Model, AuditMixinNullable):
                 href = '{} Role'.format(r.name)
             action_list = action_list + '<li>' + href + '</li>'
         return '<ul>' + action_list + '</ul>'
+
+class MahaApi:
+    @staticmethod
+    def get_request_id():
+        rid = calendar.timegm(time.gmtime())
+        return rid
+    
+    @staticmethod
+    def get_default_headers(rid):
+        logging.info("RID: {}".format(rid))
+        xuserid = 'superset'
+        cookie = ''
+        if has_request_context():
+            xuserid = request.headers.get('X-User-Id', 'superset')
+            cookie = request.headers.get('Cookie', '')
+
+        headers = ({str("Cookie"): str(cookie), str("X-Request-Id"): str(rid), str("Content-type"): str("application/json"), str("X-User-Id"): str(xuserid)})
+        return headers
+    
+    @staticmethod
+    def get_sync_request_headers(request, rid):
+        logging.info("RID: {}".format(rid))
+
+        cookie = request.headers.get('Cookie', '')
+        xuserid = request.headers.get('X-User-Id', 'superset')
+        headers = ({str("Cookie"): str(cookie), str("X-Request-Id"): str(rid), str("Content-type"): str("application/json"), str("X-User-Id"): str(xuserid)})
+        return headers
+    
+    @staticmethod
+    def get_domain_url(registry):
+        url = ("http://{obj.registry_host}:{obj.registry_port}/"
+               "{obj.registry_endpoint}/{obj.domain_endpoint}/".format(obj=registry))
+        return url
+
+    @staticmethod
+    def get_cube_url(registry,cube):
+        url = ("http://{obj.registry_host}:{obj.registry_port}/"
+               "{obj.registry_endpoint}/{obj.domain_endpoint}/cubes/{cube}/{ver}".format(obj=registry, cube=cube.cube_name, ver=cube.cube_version))
+        return url
+
+    @staticmethod
+    def get_sync_url(registry):
+        url = ("http://{registry.registry_host}:{registry.registry_port}/{registry.registry_endpoint}/{registry.sync_request_endpoint}".format(registry=registry))
+        return url
+    
+    
+class Lookback(Model, AuditMixinNullable):
+    __tablename__ = 'lookbacks'
+    id = Column(Integer, primary_key=True)
+    cube_id = Column(Integer, ForeignKey('cubes.id'))
+    request_type = Column(String)
+    grain = Column(String)
+    lookback_days = Column(Integer, default=int(config.get("MAX_DAYS_LOOKBACK_SYNC")))
+    max_window = Column(Integer, default=int(config.get("MAX_DAYS_WINDOW_SYNC")))
+
+    @property
+    def get_json(self):
+        return json.dumps(
+            {
+                "cube_id": self.cube_id,
+                "request_type": self.request_type,
+                "grain": self.grain,
+                "lookback_days": self.lookback_days,
+                "max_window": self.max_window
+            }
+            )
+    

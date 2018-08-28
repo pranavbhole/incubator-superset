@@ -59,8 +59,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = '\2\1thisismyscretkey\1\2\e\y\y\h'  # noqa
 
 # The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATA_DIR, 'superset.db')
-# SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
+# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATA_DIR, 'superset.db')
+SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_SQLALCHEMY_URI')
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
 
 # In order to hook up a custom password store for all SQLACHEMY connections
@@ -150,6 +150,12 @@ AUTH_TYPE = AUTH_DB
 # This is useful if one wants to enable anonymous users to view
 # dashboards. Explicit grant on specific datasets is still required.
 PUBLIC_ROLE_LIKE_GAMMA = False
+
+# ---------------------------------------------------------
+
+#Cube defaults
+MAX_DAYS_WINDOW_SYNC = 31
+MAX_DAYS_LOOKBACK_SYNC = 400
 
 # ---------------------------------------------------
 # Babel config for translations
@@ -246,6 +252,7 @@ DRUID_DATA_SOURCE_BLACKLIST = []
 DEFAULT_MODULE_DS_MAP = OrderedDict([
     ('superset.connectors.sqla.models', ['SqlaTable']),
     ('superset.connectors.druid.models', ['DruidDatasource']),
+    ('superset.connectors.maha.models', ['Cube'])
 ])
 ADDITIONAL_MODULE_DS_MAP = {}
 ADDITIONAL_MIDDLEWARE = []

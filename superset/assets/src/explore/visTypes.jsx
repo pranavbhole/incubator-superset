@@ -41,6 +41,15 @@ export const sections = {
       ['time_range'],
     ],
   },
+  mahaTimeSerices: {
+    label: t('Time'),
+    description: 'Time related form attributes',
+    expanded: true,
+    controlSetRows: [
+      ['granularity_maha'],
+      ['time_range'],
+    ],
+  },
   annotations: {
     label: t('Annotations and Layers'),
     expanded: true,
@@ -1881,7 +1890,7 @@ export function sectionsToRender(vizType, datasourceType) {
 
   return [].concat(
     sectionsCopy.datasourceAndVizType,
-    datasourceType === 'table' ? sectionsCopy.sqlaTimeSeries : sectionsCopy.druidTimeSeries,
+    datasourceType === 'table' ? sectionsCopy.sqlaTimeSeries : datasourceType === 'maha_api'? sectionsCopy.mahaTimeSerices : sectionsCopy.druidTimeSeries,
     viz.controlPanelSections,
   ).filter(section => section);
 }

@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from sqlalchemy.orm import subqueryload
+import logging
 
 
 class ConnectorRegistry(object):
@@ -15,6 +16,8 @@ class ConnectorRegistry(object):
 
     @classmethod
     def register_sources(cls, datasource_config):
+        # debug
+        logging.info("Inside register_sources: datasource_config - {}".format(datasource_config))
         for module_name, class_names in datasource_config.items():
             class_names = [str(s) for s in class_names]
             module_obj = __import__(module_name, fromlist=class_names)

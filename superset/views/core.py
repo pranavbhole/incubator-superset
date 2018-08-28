@@ -16,7 +16,7 @@ from urllib import parse
 from flask import (
     flash, g, Markup, redirect, render_template, request, Response, url_for,
 )
-from flask_appbuilder import expose, SimpleFormView
+from flask_appbuilder import expose, SimpleFormView,BaseView
 from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder.security.decorators import has_access, has_access_api
@@ -39,6 +39,7 @@ from superset import (
 )
 from superset.connectors.connector_registry import ConnectorRegistry
 from superset.connectors.sqla.models import AnnotationDatasource, SqlaTable
+from superset.connectors.maha.models import MahaRegistry, Cube
 from superset.exceptions import SupersetException
 from superset.forms import CsvToDatabaseForm
 from superset.jinja_context import get_template_processor

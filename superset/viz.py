@@ -249,7 +249,8 @@ class BaseViz(object):
         utils.split_adhoc_filters_into_base_filters(form_data)
         granularity = (
             form_data.get('granularity') or
-            form_data.get('granularity_sqla')
+            form_data.get('granularity_sqla') or
+            form_data.get('granularity_maha')
         )
         limit = int(form_data.get('limit') or 0)
         timeseries_limit_metric = form_data.get('timeseries_limit_metric')
@@ -294,6 +295,7 @@ class BaseViz(object):
             'order_desc': order_desc,
             'prequeries': [],
             'is_prequery': False,
+            'form_data': form_data,
         }
         return d
 

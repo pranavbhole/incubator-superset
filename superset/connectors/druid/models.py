@@ -1111,6 +1111,7 @@ class DruidDatasource(Model, BaseDatasource):
             order_desc=True,
             prequeries=None,
             is_prequery=False,
+            form_data=None,
         ):
         """Runs a query against Druid and returns a dataframe.
         """

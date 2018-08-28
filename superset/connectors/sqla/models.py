@@ -528,6 +528,7 @@ class SqlaTable(Model, BaseDatasource):
             order_desc=True,
             prequeries=None,
             is_prequery=False,
+            form_data=None
         ):
         """Querying any sqla table from this common interface"""
         template_kwargs = {

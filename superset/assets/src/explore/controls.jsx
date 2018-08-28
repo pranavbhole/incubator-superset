@@ -777,6 +777,19 @@ export const controls = {
     'can type and use simple natural language as in `10 seconds`, ' +
     '`1 day` or `56 weeks`'),
   },
+  
+  granularity_maha: {
+    type: 'SelectControl',
+    freeForm: true,
+    label: 'Time Granularity',
+    default: '1 day',
+    choices: formatSelectOptions([
+      'all',
+      '1 hour',
+      '1 day',
+    ]),
+    description: 'The time granularity for the visualization.',
+  },
 
   domain_granularity: {
     type: 'SelectControl',
