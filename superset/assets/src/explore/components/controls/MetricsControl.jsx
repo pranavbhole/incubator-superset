@@ -199,12 +199,13 @@ export default class MetricsControl extends React.PureComponent {
       ...props.savedMetrics,
     ];
 
+    var isMaha = this.props.datasourceType === 'maha_api';
     return options.reduce((results, option) => {
       if (option.metric_name) {
         results.push({ ...option, optionName: option.metric_name });
-      } else if (option.column_name) {
+      } else if (option.column_name && !isMaha) {
         results.push({ ...option, optionName: '_col_' + option.column_name });
-      } else if (option.aggregate_name) {
+      } else if (option.aggregate_name && !isMaha) {
         results.push({ ...option, optionName: '_aggregate_' + option.aggregate_name });
       }
       return results;
