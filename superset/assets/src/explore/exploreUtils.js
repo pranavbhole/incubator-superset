@@ -91,7 +91,6 @@ export function getExploreUrlAndPayload({
   }
   uri = uri.search(search).directory(directory);
   const payload = { ...formData };
-
   return {
     url: uri.toString(),
     payload,

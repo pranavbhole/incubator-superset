@@ -1064,7 +1064,7 @@ class Superset(BaseSupersetView):
                 headers=generate_download_headers('csv'),
                 mimetype='application/csv')
 
-        if query:
+        if query and datasource_type != 'maha_api':
             return self.get_query_string_response(viz_obj)
 
         try:

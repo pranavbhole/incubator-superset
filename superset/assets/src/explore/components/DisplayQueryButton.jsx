@@ -46,6 +46,7 @@ export default class DisplayQueryButton extends React.PureComponent {
       isLoading: false,
       error: null,
       sqlSupported: props.latestQueryFormData.datasource.split('__')[1] === 'table',
+      isMahaAPI: false,
     };
     this.beforeOpen = this.beforeOpen.bind(this);
   }
@@ -68,6 +69,7 @@ export default class DisplayQueryButton extends React.PureComponent {
           data: data.data,
           isLoading: false,
           error: null,
+          isMahaAPI: this.props.latestQueryFormData.datasource.split('__')[1] === 'maha_api',
         });
       },
       error: (data) => {
@@ -107,6 +109,15 @@ export default class DisplayQueryButton extends React.PureComponent {
     return null;
   }
   renderResultsModalBody() {
+    if (this.state.isMahaAPI){
+      return (
+        <div>
+          <SyntaxHighlighter language={this.state.language} style={github}>
+            {JSON.stringify(this.state.data)}
+          </SyntaxHighlighter>
+        </div>
+      );
+    }
     if (this.state.isLoading) {
       return (<img
         className="loading"
@@ -120,8 +131,8 @@ export default class DisplayQueryButton extends React.PureComponent {
         return 'No data';
       }
       const headers = Object.keys(this.state.data[0]).map((k, i) => (
-        <TableHeaderColumn key={k} dataField={k} isKey={i === 0} dataSort>{k}</TableHeaderColumn>
-      ));
+              <TableHeaderColumn key={k} dataField={k} isKey={i === 0} dataSort>{k}</TableHeaderColumn>
+            ));
       return (
         <BootstrapTable
           height="auto"

@@ -18,7 +18,7 @@ from sqlalchemy.sql import table, literal_column, text, column
 from superset import app, db, get_session, utils, models, appbuilder
 from superset.utils import flasher
 from superset.models.helpers import AuditMixinNullable, QueryResult
-from superset.models.core import Slice,MahaApi, Lookback
+from superset.models.core import Slice, MahaApi, Lookback
 from superset.connectors.base.models import BaseDatasource, BaseMetric, BaseColumn
 import numpy as np
 import calendar, time
@@ -470,7 +470,7 @@ class Cube(Model, BaseDatasource, AuditMixinNullable):
             flasher("Adding new datasource [{}] for registry {}".format(cube_name, registry.registry_name), "success")
             sm = appbuilder.sm
             perm = cube.get_perm()
-            sm.add_permission_view_menu('datasource_access', perm)
+            logging.info("test cube perm: {}".format(cube.perm))
             if cube.perm != perm:
                 cube.perm = perm
         else:
@@ -478,7 +478,7 @@ class Cube(Model, BaseDatasource, AuditMixinNullable):
         cube.registry = registry
 
         session.commit()
-
+        
         rid = MahaApi.get_request_id()
         headers = MahaApi.get_default_headers(rid)
 
@@ -693,7 +693,7 @@ class Cube(Model, BaseDatasource, AuditMixinNullable):
         if query_grain is 'HourlyGrain':
             request_data['selectFields'].append({"field": "Hour"})
             time_columns.append('Hour')
-            request_data['filters'].append({"field": "Hour", "operator": "between", "from": str(from_dttm.hour), "to": str(to_dttm.hour)})
+            request_data['filterExpressions'].append({"field": "Hour", "operator": "between", "from": str(from_dttm.hour), "to": str(to_dttm.hour)})
             # for certain cubes, Hour data is only from 00 to 23. So Day data is needed for accurate time. 
             if is_timeseries:
                 request_data['selectFields'].append({"field": "Day"})
